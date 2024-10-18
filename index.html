@@ -26,8 +26,6 @@ function clearCanvas() {
 
     function draw() {
         clearCanvas();
-
-        context.clearRect(0, 0, canvas.width, canvas.height);
         
         drawBricks();
         ball();
@@ -38,8 +36,6 @@ function clearCanvas() {
         ballMovement();
         paddleMovement();
 
-        init();
-
         window.requestAnimationFrame(draw);
     }
 
@@ -47,11 +43,6 @@ function clearCanvas() {
     context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-
-    function init() {
-        document.addEventListern('keydown', 'keydownHandler');
-        document.addEventListner('deyup', keyupHandler);
-    }
     function collisionDetection() {
         for(let c = 0; c < brickColumns; c++) {
             for (let r = 0; r < brickRows; r++) {
@@ -70,7 +61,7 @@ function clearCanvas() {
     };
 
     function ballMovement() {
-        const isBallSaneXASPaddle = x > paddleX && x < paddleX + paddleWidth;
+        const isBallSameXAsPaddle = x > paddleX && x < paddleX + paddleWidth;
         const isBallTouchingPaddle = y + dy > paddleY;
 
         if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
@@ -79,12 +70,9 @@ function clearCanvas() {
         if (y + dy < ballRadius) {
             dy = -dy;
         }
-        if (isBallSaneXAsPaddle && isBallTouchingPaddle) {
+        if (isBallSameXAsPaddle && isBallTouchingPaddle) {
             dy = -dy;
-        }
-        if (isBallSaneXAsPaddle && isBallTouchingPaddle) {
-            dy = -dy;
-        } else if ( y + dy > canvas.height - ballRadius) {
+        } else if (y + dy > canvas.height - ballRadius) {
             console.log('GAME OVER')
             document.location.reload()
         }
@@ -138,6 +126,35 @@ function clearCanvas() {
         };
     };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     function drawBricks() {
         for(let c = 0; c < brickColumns; c++) {
             for (let r = 0; r < brickRows; r++) {
@@ -197,30 +214,6 @@ function clearCanvas() {
             paddleX += 7;
         } else if (leftPressed && paddleX > 0) {
             paddleX -= 7;
-        }
-    }
-
-    // Fügen Sie diese Variablen hinzu, um die Tastatureingaben zu verfolgen
-    let rightPressed = false;
-    let leftPressed = false;
-
-    // Fügen Sie diese Ereignislistener hinzu, um Tastatureingaben zu erfassen
-    document.addEventListener("keydown", keyDownHandler, false);
-    document.addEventListener("keyup", keyUpHandler, false);
-
-    function keyDownHandler(e) {
-        if (e.key === "Right" || e.key === "ArrowRight") {
-            rightPressed = true;
-        } else if (e.key === "Left" || e.key === "ArrowLeft") {
-            leftPressed = true;
-        }
-    }
-
-    function keyUpHandler(e) {
-        if (e.key === "Right" || e.key === "ArrowRight") {
-            rightPressed = false;
-        } else if (e.key === "Left" || e.key === "ArrowLeft") {
-            leftPressed = false;
         }
     }
 
