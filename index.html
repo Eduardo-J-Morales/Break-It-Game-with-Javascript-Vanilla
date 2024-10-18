@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    
+</head>
+<body>
+   
+        <canvas></canvas>
+
+<script>
+    let canvas = document.querySelector("canvas");
+    let context = canvas.getContext("2d");
+
+    canvas.width = 600;
+    canvas.height = 450;
+
+    let dx = 5;
+    let dy = -5;
+    
+    function draw() {
+        collisionDetection();
+        ball();
+        paddle();
+        drawBricks();
+
+        window.requestAnimationFrame(draw);
+        
+    }
+
+    function collisionDetection() {
+        for(let c = 0; c < brickColumns; c++) {
+            for (let r = 0; r < brickRows; r++) {
+                const currentBrick = bricks[c][r];
+                if(currentBrick.status === BRICK_STATUS.DESTROYED) continue;
+
+                const isBallSameXAsBrick = x > currentBrick.x && x < currentBrick.x + brickWidth;
+                const isBallSameYAsBrick = y > currentBrick.y && y < currentBrick.y + brickHeight;
+
+                if(isBallSameXAsBrick && isBallSameYAsBrick) {
+                    dy = -dy;
+                    currentBrick.status = BRICK_STATUS.DESTROYED;
+                }
+            }
+        }
+    };
+
+
+    function ballMovement() {
+        const isBallSaneXASPaddle = x > paddleX && x < paddleX + paddleWidth;
+        const isBallTouchingPaddle = y + dy > paddleY;
+
+        if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+            dx = -dx;
+        }
+        if (y + dy < ballRadius) {
+            dy = -dy;
+        }
+        if (isBallSaneXAsPaddle && isBallTouchingPaddle) {
+            dy = -dy;
+        }
+        if (isBallSaneXAsPaddle && isBallTouchingPaddle) {
+            dy = -dy;
+        } else if ( y + dy > canvas.height - ballRadius) {
+            console.log('GAME OVER')
+            document.location.reload()
+        }
+        x += dx;
+        y += dy;
+    }
+
+    const brickRows = 7; 
+    const brickColumns = 13;
+    const brickWidth = 32;
+    const brickHeight = 16;
+    const paddingBrick = 2;
+    const brickOffsetTop = 80;
+    const brickOffsetLeft = (canvas.width - ((brickWidth + paddingBrick) * brickColumns - paddingBrick)) / 2;
+    const bricks = [];
+
+    const BRICK_STATUS = {
+        ACTIVE: 1,
+        DESTROYED: 0,
+        NAME: 2 
+    }
+
+    const firstName = "EDUARDO";
+    const lastName = "MORALES";
+
+    for(let c = 0; c < brickColumns; c++) {
+        bricks[c] = [];
+        for(let r = 0; r < brickRows; r++) {
+            const brickX = c * (brickWidth + paddingBrick) + brickOffsetLeft;
+            const brickY = r * (brickHeight + paddingBrick) + brickOffsetTop;
+            let status = BRICK_STATUS.ACTIVE;
+            let color = Math.floor(Math.random() * 8);
+            let letter = '';
+            
+            if (r === 0 && c < firstName.length) {
+                status = BRICK_STATUS.NAME;
+                letter = firstName[c];
+            } else if (r === 1 && c < lastName.length) {
+                status = BRICK_STATUS.NAME;
+                color = 8;
+                letter = lastName[c];
+            }
+            
+            bricks[c][r] = {
+                x: brickX,
+                y: brickY,
+                status: status,
+                color: color,
+                letter: letter
+            };
+        };
+    };
+
+    function drawBricks() {
+        for(let c = 0; c < brickColumns; c++) {
+            for (let r = 0; r < brickRows; r++) {
+                const currentBrick = bricks[c][r];
+                if(currentBrick.status === BRICK_STATUS.ACTIVE || currentBrick.status === BRICK_STATUS.NAME) {
+                    context.beginPath();
+                    context.rect(
+                        currentBrick.x,
+                        currentBrick.y,
+                        brickWidth,
+                        brickHeight
+                    );
+                    context.fillStyle = `hsl(${currentBrick.color * 45}, 100%, 50%)`;
+                    context.fill();
+                    context.closePath();
+                    
+                    if (currentBrick.status === BRICK_STATUS.NAME) {
+                        context.fillStyle = "black";
+                        context.font = "bold 16px Arial"; 
+                        context.textAlign = "center";
+                        context.textBaseline = "middle";
+                        context.fillText(currentBrick.letter, currentBrick.x + brickWidth/2, currentBrick.y + brickHeight/2);
+                    }
+                }
+            }
+        }
+    }
+
+    const paddleWidth = 50;
+    const paddleHeight = 10;
+
+    let paddleX = (canvas.width - paddleWidth) / 2;
+    let paddleY = canvas.height - paddleHeight - 10;
+    
+    function paddle() {
+        context.fillRect(paddleX, paddleY, paddleWidth, paddleHeight);
+    }
+    
+    const ballRadius = 10;
+    
+    let x = canvas.width / 2;
+    let y = canvas.height - 30; 
+    
+    
+    function ball() {
+        context.beginPath();
+        context.arc(x, y, ballRadius, 0, Math.PI *2);
+        context.fillStyle = "white";
+        context.fill();
+        context.closePath();
+        
+    }
+    
+    draw()
+
+</script>
+
+
+<style>
+
+body {
+    background-color: #1e1e1e;
+}
+
+
+canvas {
+    border: 3px solid yellow;
+    background: url('img/bkg.png') repeat;
+    margin: 0 auto;
+    display: block;
+}
+
+
+</style>
+    </body>
+
+</html>
