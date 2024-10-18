@@ -20,16 +20,38 @@
     let dx = 5;
     let dy = -5;
     
+function clearCanvas() {
+    context.clearRect(0, 0, canvas.width, canvas.height)
+}
+
     function draw() {
-        collisionDetection();
+        clearCanvas();
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        
+        drawBricks();
         ball();
         paddle();
-        drawBricks();
+        
+        collisionDetection();
+        
+        ballMovement();
+        paddleMovement();
+
+        init();
 
         window.requestAnimationFrame(draw);
-        
     }
 
+function clearCanvas() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+
+    function init() {
+        document.addEventListern('keydown', 'keydownHandler');
+        document.addEventListner('deyup', keyupHandler);
+    }
     function collisionDetection() {
         for(let c = 0; c < brickColumns; c++) {
             for (let r = 0; r < brickRows; r++) {
@@ -46,7 +68,6 @@
             }
         }
     };
-
 
     function ballMovement() {
         const isBallSaneXASPaddle = x > paddleX && x < paddleX + paddleWidth;
@@ -170,7 +191,40 @@
         
     }
     
-    draw()
+    // Fügen Sie diese Funktion hinzu, um die Paddle-Bewegung zu steuern
+    function paddleMovement() {
+        if (rightPressed && paddleX < canvas.width - paddleWidth) {
+            paddleX += 7;
+        } else if (leftPressed && paddleX > 0) {
+            paddleX -= 7;
+        }
+    }
+
+    // Fügen Sie diese Variablen hinzu, um die Tastatureingaben zu verfolgen
+    let rightPressed = false;
+    let leftPressed = false;
+
+    // Fügen Sie diese Ereignislistener hinzu, um Tastatureingaben zu erfassen
+    document.addEventListener("keydown", keyDownHandler, false);
+    document.addEventListener("keyup", keyUpHandler, false);
+
+    function keyDownHandler(e) {
+        if (e.key === "Right" || e.key === "ArrowRight") {
+            rightPressed = true;
+        } else if (e.key === "Left" || e.key === "ArrowLeft") {
+            leftPressed = true;
+        }
+    }
+
+    function keyUpHandler(e) {
+        if (e.key === "Right" || e.key === "ArrowRight") {
+            rightPressed = false;
+        } else if (e.key === "Left" || e.key === "ArrowLeft") {
+            leftPressed = false;
+        }
+    }
+
+    draw();
 
 </script>
 
